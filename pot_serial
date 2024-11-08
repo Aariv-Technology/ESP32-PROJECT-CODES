@@ -1,0 +1,22 @@
+// Define the potentiometer pin
+const int potPin = 34; // ADC pin (GPIO 34)
+
+// Variable to store the analog reading
+int potValue = 0;
+
+void setup() {
+  // Initialize serial communication at 115200 baud
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Read the analog value from the potentiometer
+  potValue = analogRead(potPin);
+
+  // Print the potentiometer value to the Serial Monitor
+  Serial.print("Potentiometer Value: ");
+  Serial.println(potValue);
+
+  // Delay for a short time to avoid flooding the serial output
+  delay(500);
+}
