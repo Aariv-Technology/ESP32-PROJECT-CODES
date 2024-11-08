@@ -1,0 +1,27 @@
+#include <WiFi.h>
+
+const char *ssid = "ESP32-Access-Point"; // SSID of the access point
+const char *password = "123456789";       // Password for the access point
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Start the access point
+  WiFi.softAP(ssid, password);
+  
+  Serial.println("Access Point started");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.softAPIP()); // Print the IP address of the AP
+}
+
+void loop() {
+  // Check the number of connected devices
+  int numConnected = WiFi.softAPgetStationNum();
+  
+  // Print the number of connected devices
+  Serial.print("Connected devices: ");
+  Serial.println(numConnected);
+  
+  // Wait for 2 seconds before the next check
+  delay(2000);
+}
