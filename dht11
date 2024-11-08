@@ -1,0 +1,48 @@
+#include <DHT.h>
+
+// Define DHT sensor type and pin
+#define DHTPIN 15        // Pin where the DHT11 is connected
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+// Define LDR pin
+#define LDR_PIN 34       // Analog pin where the LDR is connected
+
+void setup() {
+  // Initialize Serial Monitor
+  Serial.begin(115200);
+
+  // Initialize DHT sensor
+  dht.begin();
+
+  // Configure LDR pin
+  pinMode(LDR_PIN, INPUT);
+}
+
+void loop() {
+  // Reading temperature and humidity from DHT11
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+
+  // Reading the light intensity from the LDR
+  int ldrValue = analogRead(LDR_PIN);
+  float lightIntensity = map(ldrValue, 0, 4095, 0, 100); // Convert to a percentage (0-100%)
+
+  // Print values to Serial Monitor
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Failed to read from DHT sensor!");
+  } else {
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.print("%, Temperature: ");
+    Serial.print(temperature);
+    Serial.println("°C");
+  }
+
+  Serial.print("Light Intensity: ");
+  Serial.print(lightIntensity);
+  Serial.println("%");
+
+  // Wait for 2 seconds before the next reading
+  delay(2000);
+}
