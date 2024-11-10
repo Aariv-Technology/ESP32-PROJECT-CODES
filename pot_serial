@@ -1,5 +1,5 @@
 // Define the potentiometer pin
-const int potPin = 34; // ADC pin (GPIO 34)
+#define potPin 34   // ADC pin (GPIO 34)
 
 // Variable to store the analog reading
 int potValue = 0;
