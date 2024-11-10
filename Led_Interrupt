@@ -1,0 +1,54 @@
+#define buttonPin 15       // Define the button pin
+#define led1       2       // Define LED1 pin
+#define led2       4       // Define LED2 pin
+#define led3      16       // Define LED3 pin
+
+volatile int pressCount = 0; // To keep track of button presses
+volatile unsigned long lastPressTime = 0; // To store the last press time for debouncing
+
+void IRAM_ATTR handleButtonPress() {
+  unsigned long currentTime = millis();
+  if (currentTime - lastPressTime > 200) { // 200 ms debounce time
+    pressCount = (pressCount + 1) % 5; // Cycle through 0 to 4
+    lastPressTime = currentTime;
+  }
+}
+
+void setup() {
+  pinMode(buttonPin, INPUT); // Set button pin as input
+  pinMode(led1, OUTPUT);     // Set LED1 as output
+  pinMode(led2, OUTPUT);     // Set LED2 as output
+  pinMode(led3, OUTPUT);     // Set LED3 as output
+
+  attachInterrupt(buttonPin, handleButtonPress, FALLING); // Attach interrupt to button pin
+}
+
+void loop() {
+  switch (pressCount) {
+    case 0:
+      digitalWrite(led1, LOW); // Turn off all LEDs
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
+      break;
+    case 1:
+      digitalWrite(led1, HIGH); // Turn on LED1
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
+      break;
+    case 2:
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, HIGH); // Turn on LED2
+      digitalWrite(led3, LOW);
+      break;
+    case 3:
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, HIGH); // Turn on LED3
+      break;
+    case 4:
+      digitalWrite(led1, HIGH);
+      digitalWrite(led2, HIGH);
+      digitalWrite(led3, HIGH); // Turn on all LEDs
+      break;
+  }
+}
