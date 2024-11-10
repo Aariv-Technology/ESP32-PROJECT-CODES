@@ -1,0 +1,37 @@
+#include <ESP32Servo.h>
+
+// Define the potentiometer input pin and the servo control pin
+const int potentiometerPin = 34;  // Use an ADC pin for the potentiometer
+const int servoPin = 19;          // Servo control pin
+
+Servo myservo;  // Create a Servo object to control the servo motor
+
+void setup() {
+  Serial.begin(115200);
+
+  // Attach the servo to the control pin
+  myservo.attach(servoPin);
+
+  // Configure the potentiometer pin as input
+  pinMode(potentiometerPin, INPUT);
+}
+
+void loop() {
+  // Read the potentiometer value (0 to 4095 for ESP32 ADC)
+  int potValue = analogRead(potentiometerPin);
+
+  // Map the potentiometer value to a range of 0 to 180 for the servo angle
+  int angle = map(potValue, 0, 4095, 0, 180);
+
+  // Set the servo angle based on the mapped value
+  myservo.write(angle);
+
+  // Print the potentiometer value and the corresponding servo angle
+  Serial.print("Potentiometer Value: ");
+  Serial.print(potValue);
+  Serial.print(" -> Servo Angle: ");
+  Serial.println(angle);
+
+  // Small delay to smooth the movement
+  delay(20);
+}
