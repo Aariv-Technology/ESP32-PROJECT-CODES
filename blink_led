@@ -1,11 +1,17 @@
-int LED=2;
+// Define the LED pin
+#define ledPin 2 // Built-in LED on most ESP32 boards
+
 void setup() {
-  pinMode(LED,OUTPUT);
+  // Set the LED pin as an output
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(LED,HIGH);
-  delay(1000);
-  digitalWrite(LED,LOW);
-  delay(1000);
+  // Turn the LED on
+  digitalWrite(ledPin, HIGH);
+  delay(1000); // Wait for 1 second
+
+  // Turn the LED off
+  digitalWrite(ledPin, LOW);
+  delay(1000); // Wait for 1 second
 }
