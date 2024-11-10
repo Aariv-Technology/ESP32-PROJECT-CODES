@@ -1,0 +1,43 @@
+#include <WiFi.h>
+
+// Define the AP and STA credentials
+const char *ssidAP = "ESP32_AP";         // Access Point SSID
+const char *passwordAP = "123456789";    // Access Point Password
+const char *ssidSTA = "YourWiFiSSID";    // Station SSID
+const char *passwordSTA = "YourWiFiPassword";  // Station Password
+
+void setup() {
+  Serial.begin(115200);
+
+  // Configure the ESP32 as both an Access Point and a Station
+  WiFi.mode(WIFI_AP_STA);
+
+  // Start the Access Point
+  WiFi.softAP(ssidAP, passwordAP);
+  Serial.println("Access Point started");
+  Serial.print("AP IP address: ");
+  Serial.println(WiFi.softAPIP());
+
+  // Connect to the Wi-Fi network in Station mode
+  WiFi.begin(ssidSTA, passwordSTA);
+  Serial.println("Connecting to WiFi as Station...");
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected as Station");
+  Serial.print("Station IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  // Print the number of connected devices to the Access Point
+  int numConnectedDevices = WiFi.softAPgetStationNum();
+  Serial.print("Number of devices connected to AP: ");
+  Serial.println(numConnectedDevices);
+
+  // Delay to avoid flooding the serial monitor
+  delay(5000);  // Print every 5 seconds
+}
