@@ -1,0 +1,36 @@
+// Define pins for L293D motor control
+#define motorPin1 23 // IN1 on L293D
+#define motorPin2 22 // IN2 on L293D
+#define enablePin 21 // ENA on L293D (Enable pin for motor control)
+
+void setup() {
+  // Set motor control pins as output
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(enablePin, OUTPUT);
+
+  // Enable motor (set ENA pin to HIGH)
+  digitalWrite(enablePin, HIGH); // Enable motor on L293D
+}
+
+void loop() {
+  // Forward Direction
+  digitalWrite(motorPin1, HIGH);  // Motor pin 1 HIGH
+  digitalWrite(motorPin2, LOW);   // Motor pin 2 LOW
+  delay(2000);  // Motor runs forward for 2 seconds
+
+  // Stop Motor
+  digitalWrite(motorPin1, LOW);   // Motor pin 1 LOW
+  digitalWrite(motorPin2, LOW);   // Motor pin 2 LOW
+  delay(1000);  // Motor stops for 1 second
+
+  // Reverse Direction
+  digitalWrite(motorPin1, LOW);   // Motor pin 1 LOW
+  digitalWrite(motorPin2, HIGH);  // Motor pin 2 HIGH
+  delay(2000);  // Motor runs in reverse for 2 seconds
+
+  // Stop Motor
+  digitalWrite(motorPin1, LOW);   // Motor pin 1 LOW
+  digitalWrite(motorPin2, LOW);   // Motor pin 2 LOW
+  delay(1000);  // Motor stops for 1 second
+}
