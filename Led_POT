@@ -1,0 +1,20 @@
+// Define pins
+#define potPin 34   // Potentiometer connected to GPIO 34 (ADC)
+#define ledPin 13   // LED connected to GPIO 13
+
+void setup() {
+  // Set up LED pin as output
+  pinMode(ledPin, OUTPUT);
+  pinMode(potPin, INPUT);
+}
+
+void loop() {
+  // Read the potentiometer value (0 to 4095)
+  int potValue = analogRead(potPin);
+
+  // Map the potentiometer value from o to 100
+  int brightness = map(potValue, 0, 4095, 0, 100);
+
+  //write brightness value to ledPin
+  analogWrite(ledPin, brightness);
+}
