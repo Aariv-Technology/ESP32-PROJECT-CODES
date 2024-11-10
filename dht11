@@ -26,7 +26,7 @@ void loop() {
 
   // Reading the light intensity from the LDR
   int ldrValue = analogRead(LDR_PIN);
-  float lightIntensity = map(ldrValue, 0, 4095, 0, 100); // Convert to a percentage (0-100%)
+  float lightIntensity = map(ldrValue, 0, 4095, 100, 0); // Convert to a percentage (0-100%)
 
   // Print values to Serial Monitor
   if (isnan(humidity) || isnan(temperature)) {
