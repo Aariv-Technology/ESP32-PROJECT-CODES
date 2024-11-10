@@ -1,6 +1,6 @@
 // Define GPIO pins
-const int ledPin = 13;          // LED connected to GPIO 13
-const int buttonPin = 12;       // Button connected to GPIO 12
+#define ledPin    2          // LED connected to GPIO 2
+#define buttonPin 12       // Button connected to GPIO 12
 
 void setup() {
   // Set the LED pin as output
