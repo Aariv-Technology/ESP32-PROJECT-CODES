@@ -1,0 +1,84 @@
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+
+// UUIDs for the BLE service and characteristic
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+
+String receivedData;  // Variable to store received data
+BLECharacteristic *pCharacteristic;  // Global variable for BLE characteristic
+
+// Define a callback class to handle writes to the characteristic
+class MyCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue().c_str();
+
+    if (value.length() > 0) {
+      Serial.print("Received data from BLE: ");
+      for (int i = 0; i < value.length(); i++) {
+        Serial.print(value[i]);
+      }
+      Serial.println();
+      
+      // Store the received data in a String variable
+      receivedData = value.c_str();
+    }
+  }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting BLE work!");
+
+  // Initialize BLE
+  BLEDevice::init("SMRITI");
+  BLEServer *pServer = BLEDevice::createServer();
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  // Create the BLE characteristic with read, write, and notify properties
+  pCharacteristic = pService->createCharacteristic(
+    CHARACTERISTIC_UUID,
+    BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE );
+
+  // Set the callback for handling write events
+  pCharacteristic->setCallbacks(new MyCallbacks());
+
+  pService->start();
+  // Start advertising
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(true);
+  pAdvertising->setMinPreferred(0x06);  // Functions that help with iPhone connections issue
+  pAdvertising->setMinPreferred(0x12);
+  BLEDevice::startAdvertising();
+  
+  Serial.println("Characteristic defined! Now you can read and write");
+}
+
+void loop() {
+
+  // Check if there's data available on the Serial port
+  if (Serial.available()) {
+      char a[1024];  // buffer to store incoming serial data
+      int i = 0;
+
+      // Read until no more characters are available or buffer is full
+      while (Serial.available() && i < 1023) { // Leave space for null terminator
+          a[i++] = Serial.read();
+      }
+      a[i] = '\0'; // Null-terminate the character array
+
+      // Print the serial data to the Serial Monitor
+      Serial.print("Sending data over BLE: ");
+      Serial.println(a);
+      
+      String data = String(a);
+      data.trim();
+
+      // Update the characteristic value and notify the client
+      pCharacteristic->setValue(data);   // Set the new value for the characteristic
+  }
+
+  delay(200);  // Adjust delay as needed for stable communication
+}
