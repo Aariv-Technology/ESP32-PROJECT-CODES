@@ -1,9 +1,10 @@
+
 #include <WiFi.h>
 #include <WebServer.h>  // Correct the case of 'Server'
 
 // Replace with your network credentials
-const char* ssid = "Aariv_Technology";
-const char* password = "12";
+const char* ssid = "YourSSID";
+const char* password = "YourPassword";
 
 // Create an instance of the web server on port 80
 WebServer server(80);
