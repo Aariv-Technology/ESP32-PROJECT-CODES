@@ -1,0 +1,28 @@
+#include "esp_sleep.h"
+
+RTC_DATA_ATTR int bootCount = 0;  // Variable stored in RTC memory
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // Increment the boot count each time the device wakes up
+  bootCount++;
+  Serial.println("Boot number: " + String(bootCount));
+
+  // Set a wake-up timer for 30 seconds
+  esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+  // Enable GPIO 33 as a wake-up source
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 0);  // Wake up on a low signal on GPIO 33
+
+  Serial.println("Entering deep sleep...");
+  delay(1000);
+
+  // Enter deep sleep
+  esp_deep_sleep_start();
+}
+
+void loop() {
+  // This will never be reached in deep sleep as the CPU resets upon wake-up
+}
