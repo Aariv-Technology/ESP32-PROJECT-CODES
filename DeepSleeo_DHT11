@@ -1,0 +1,41 @@
+#include <DHT.h>
+#include "esp_sleep.h"
+
+// Define DHT11 settings
+#define DHTPIN 4       // Pin where the DHT11 data pin is connected
+#define DHTTYPE DHT11  // Define the sensor type as DHT11
+
+DHT dht(DHTPIN, DHTTYPE);  // Create a DHT object
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);  // Delay for stable serial output
+  
+  // Initialize DHT sensor
+  dht.begin();
+
+  // Read temperature and humidity from DHT11
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Check if readings are successful
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+  } else {
+    Serial.println("Temperature: " + String(temperature) + "°C");
+    Serial.println("Humidity: " + String(humidity) + "%");
+  }
+
+  // Set a wake-up timer for 10 seconds
+  esp_sleep_enable_timer_wakeup(10 * 1000000);  // 10 seconds in microseconds
+
+  Serial.println("Entering deep sleep for 10 seconds...");
+  delay(1000);
+
+  // Enter deep sleep mode
+  esp_deep_sleep_start();
+}
+
+void loop() {
+  // Code here will not be reached as the ESP32 resets on wake-up
+}
