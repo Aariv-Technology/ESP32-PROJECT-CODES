@@ -35,5 +35,10 @@ void loop() {
 
   // Send the LDR value to the Blynk app via virtual pin V1
   Blynk.virtualWrite(V0, lightIntensity);
+
+  //Notification
+  if(lightIntensity > 90){
+    Blynk.logEvent("high_intensity"); //change message as per your notification settings 
+  }
 }
 
