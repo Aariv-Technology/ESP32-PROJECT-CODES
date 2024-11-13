@@ -1,0 +1,475 @@
+#include "FS.h"           // File system library
+#include "SPIFFS.h"       // SPIFFS library
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS initialization failed!");
+    return;
+  }
+  Serial.println("SPIFFS initialized successfully.");
+
+  // Write to a file
+  writeFile(SPIFFS, "/example.txt", "Hello, ESP32 SPIFFS!");
+
+  // Append to the file
+  appendFile(SPIFFS, "/example.txt", "\nThis is appended text.");
+
+  // Read the file
+  readFile(SPIFFS, "/example.txt");
+}
+
+void loop() {
+  // Nothing to do here
+}
+
+// Function to write data to a file
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Writing to file: %s\n", path);
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written successfully");
+  } else {
+    Serial.println("File write failed");
+  }
+  file.close();
+}
+
+// Function to read data from a file
+void readFile(fs::FS &fs, const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  Serial.println("File Content:");
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Appending to file: %s\n", path);
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File appended successfully");
+  } else {
+    Serial.println("File append failed");
+  }
+  file.close();
+}
+
+
+
+
+
+
+
+#include "FS.h"           // File system library
+#include "SPIFFS.h"       // SPIFFS library
+#include "DHT.h"          // DHT sensor library
+
+#define DHTPIN 14         // GPIO connected to the DHT11 data pin
+#define DHTTYPE DHT11     // DHT 11 sensor type
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS initialization failed!");
+    return;
+  }
+  Serial.println("SPIFFS initialized successfully.");
+
+  // Log sensor data to file
+  logSensorData();
+
+  // Read the file to check logged data
+  readFile(SPIFFS, "/sensor_data.txt");
+}
+
+void loop() {
+  // Optionally, log data periodically
+  delay(60000); // Wait for 1 minute
+  logSensorData();
+}
+
+// Function to log sensor data to a file
+void logSensorData() {
+  float temperature = dht.readTemperature(); // Read temperature in Celsius
+  float humidity = dht.readHumidity();       // Read humidity
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  // Create a data string
+  String data = "Temperature: " + String(temperature) + " C, " +
+                "Humidity: " + String(humidity) + " %\n";
+
+  Serial.println("Logging data: " + data);
+  appendFile(SPIFFS, "/sensor_data.txt", data.c_str());
+}
+
+// Function to write data to a file
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Writing to file: %s\n", path);
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written successfully");
+  } else {
+    Serial.println("File write failed");
+  }
+  file.close();
+}
+
+// Function to read data from a file
+void readFile(fs::FS &fs, const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  Serial.println("File Content:");
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Appending to file: %s\n", path);
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File appended successfully");
+  } else {
+    Serial.println("File append failed");
+  }
+  file.close();
+}
+
+
+
+
+
+
+
+
+#include "FS.h"           // File system library
+#include "SPIFFS.h"       // SPIFFS library
+
+#define LDR_PIN 34        // GPIO connected to the LDR
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS initialization failed!");
+    return;
+  }
+  Serial.println("SPIFFS initialized successfully.");
+
+  // Log sensor data to file
+  logSensorData();
+
+  // Read the file to check logged data
+  readFile(SPIFFS, "/sensor_data.txt");
+}
+
+void loop() {
+  // Optionally, log data periodically
+  delay(60000); // Wait for 1 minute
+  logSensorData();
+}
+
+// Function to log sensor data to a file
+void logSensorData() {
+  int lightIntensity = analogRead(LDR_PIN); // Read light intensity
+
+  // Create a data string
+  String data = "Light Intensity: " + String(lightIntensity) + "\n";
+
+  Serial.println("Logging data: " + data);
+  appendFile(SPIFFS, "/sensor_data.txt", data.c_str());
+}
+
+// Function to write data to a file
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Writing to file: %s\n", path);
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written successfully");
+  } else {
+    Serial.println("File write failed");
+  }
+  file.close();
+}
+
+// Function to read data from a file
+void readFile(fs::FS &fs, const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  Serial.println("File Content:");
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Appending to file: %s\n", path);
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File appended successfully");
+  } else {
+    Serial.println("File append failed");
+  }
+  file.close();
+}
+
+
+
+
+
+
+
+
+#include "FS.h"           // File system library
+#include "SPIFFS.h"       // SPIFFS library
+#include "DHT.h"          // DHT sensor library
+
+#define DHTPIN 14         // GPIO connected to the DHT11 data pin
+#define DHTTYPE DHT11     // DHT 11 sensor type
+
+DHT dht(DHTPIN, DHTTYPE);
+const int logInterval = 10000; // Log interval in milliseconds (10 seconds)
+unsigned long previousMillis = 0; // Stores the last time data was logged
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS initialization failed!");
+    return;
+  }
+  Serial.println("SPIFFS initialized successfully.");
+
+  // Initial file read to check existing data
+  readFile(SPIFFS, "/sensor_data.txt");
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+
+  // Log data every 10 seconds
+  if (currentMillis - previousMillis >= logInterval) {
+    previousMillis = currentMillis;
+    logSensorData();
+  }
+}
+
+// Function to log sensor data to a file
+void logSensorData() {
+  float temperature = dht.readTemperature(); // Read temperature in Celsius
+  float humidity = dht.readHumidity();       // Read humidity
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  // Create a data string
+  String data = "Temperature: " + String(temperature) + " C, " +
+                "Humidity: " + String(humidity) + " %\n";
+
+  Serial.println("Logging data: " + data);
+  appendFile(SPIFFS, "/sensor_data.txt", data.c_str());
+}
+
+// Function to write data to a file
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Writing to file: %s\n", path);
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written successfully");
+  } else {
+    Serial.println("File write failed");
+  }
+  file.close();
+}
+
+// Function to read data from a file
+void readFile(fs::FS &fs, const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  Serial.println("File Content:");
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Appending to file: %s\n", path);
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File appended successfully");
+  } else {
+    Serial.println("File append failed");
+  }
+  file.close();
+}
+
+
+
+
+
+
+
+
+
+#include "FS.h"           // File system library
+#include "SPIFFS.h"       // SPIFFS library
+
+#define LDR_PIN 34        // GPIO connected to the LDR
+const int logInterval = 10000; // Log interval in milliseconds (10 seconds)
+unsigned long previousMillis = 0; // Stores the last time data was logged
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS initialization failed!");
+    return;
+  }
+  Serial.println("SPIFFS initialized successfully.");
+
+  // Initial file read to check existing data
+  readFile(SPIFFS, "/sensor_data.txt");
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+
+  // Log data every 10 seconds
+  if (currentMillis - previousMillis >= logInterval) {
+    previousMillis = currentMillis;
+    logSensorData();
+  }
+}
+
+// Function to log sensor data to a file
+void logSensorData() {
+  int lightIntensity = analogRead(LDR_PIN); // Read light intensity
+
+  // Convert the analog reading to a readable value if needed
+  String data = "Light Intensity: " + String(lightIntensity) + "\n";
+
+  Serial.println("Logging data: " + data);
+  appendFile(SPIFFS, "/sensor_data.txt", data.c_str());
+}
+
+// Function to write data to a file
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Writing to file: %s\n", path);
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written successfully");
+  } else {
+    Serial.println("File write failed");
+  }
+  file.close();
+}
+
+// Function to read data from a file
+void readFile(fs::FS &fs, const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  Serial.println("File Content:");
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.printf("Appending to file: %s\n", path);
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File appended successfully");
+  } else {
+    Serial.println("File append failed");
+  }
+  file.close();
+}
