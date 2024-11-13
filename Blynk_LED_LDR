@@ -1,0 +1,39 @@
+#define BLYNK_TEMPLATE_ID ""
+#define BLYNK_TEMPLATE_NAME ""
+#define BLYNK_AUTH_TOKEN ""
+
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+// Replace with your network credentials and Blynk Auth Token
+char ssid[] = "YourSSID";       // WiFi SSID
+char pass[] = "YourPasssword";   // WiFi Password
+
+int ledPin = 2; // The GPIO pin where the LED is connected (e.g., GPIO 2)
+int ldrPin = 34; // GPIO pin where LDR (Light Dependent Resistor) is connected (change if needed)
+int ldrValue = 0; // Variable to store the LDR value
+
+void setup() {
+  Serial.begin(115200);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+
+  // Initialize the LED pin as an output
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW); // Turn the LED off initially
+
+  // Initialize the LDR pin as input (this will read the analog value)
+  pinMode(ldrPin, INPUT);
+}
+
+void loop() {
+  Blynk.run(); // Keeps the Blynk connection active
+
+  // Read the analog value from the LDR
+  ldrValue = analogRead(ldrPin);
+
+  int lightIntensity = map(ldrValue, 0, 4095, 100 ,0);
+
+  // Send the LDR value to the Blynk app via virtual pin V1
+  Blynk.virtualWrite(V0, lightIntensity);
+}
+
