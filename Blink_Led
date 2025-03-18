@@ -1,5 +1,5 @@
 // Define the LED pin
-#define ledPin 2 // Built-in LED on most ESP32 boards
+#define ledPin 3 // Built-in LED on most ESP32 boards
 
 void setup() {
   // Set the LED pin as an output
